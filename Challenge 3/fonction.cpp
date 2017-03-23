@@ -23,7 +23,7 @@ int fonction(unsigned int value){
     }
 
   }
-  return binaire;
+  return decompte;
 
 
 }
