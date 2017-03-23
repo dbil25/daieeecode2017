@@ -6,7 +6,6 @@ bool test() {
 		fonction(0b1) == 1;
 
 }
-
 int main()
 {
 	if (test()) {
