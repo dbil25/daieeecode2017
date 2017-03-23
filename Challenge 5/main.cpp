@@ -30,7 +30,7 @@ using namespace std;
 	void Insert (std::string name,int level, std::string type, int index, ListElem *L);
 
 	//delete pokemon at position i from the Circularly Linked List
-	void Delete(int);
+	void Delete(int, ListElem*);
 
 	//Print out all pokemon on the screen
 	void printall(ListElem *L);
@@ -52,13 +52,13 @@ using namespace std;
   }
 
 	//Find pokemon with lowest level
-	ListElem *findmin(ListElem *L);
+	void findmin(ListElem *L);
 
 	//Find pokemon with highest level
-	ListElem *findmax(ListElem *L);
+	void findmax(ListElem *L);
 
 	//Find pokemon with corresponding name
-	ListElem *find(ListElem *L,std::string);
+	void find(ListElem *L,std::string);
 
 
 
@@ -78,46 +78,185 @@ using namespace std;
     }
     //insérer en position 1 qund liste vide
     if (pfirst == NULL && index == 1){
-      ListNode newNode;
-      newNode.level = level;
-      newNode.name = name;
-      newNode.type = type;
-      newNode.nextNode = NULL;
-      pfirst = plast = &newNode;
+      ListNode *newNode = (ListNode*) malloc (sizeof(ListNode));
+      newNode->level = level;
+      newNode->name = name;
+      newNode->type = type;
+      newNode->nextNode = NULL;
+      pfirst = plast = newNode;
       return;
     }
     //insérer en position 1 quand liste non vide
     if (index == 1){
-      ListNode newNode;
-      newNode.level = level;
-      newNode.name = name;
-      newNode.type = type;
-      newNode.nextNode = pfirst;
+      ListNode *newNode = (ListNode*) malloc (sizeof(ListNode));
+      newNode->level = level;
+      newNode->name = name;
+      newNode->type = type;
+      newNode->nextNode = pfirst;
       pfirst = newNode;
       return;
     }
     //insérer en dernière position
     if (index-1 == countitem(L)){
-      ListNode newNode;
-      newNode.level = level;
-      newNode.name = name;
-      newNode.type = type;
-      newNode.nextNode = NULL;
+      ListNode *newNode = (ListNode*) malloc (sizeof(ListNode));
+      newNode->level = level;
+      newNode->name = name;
+      newNode->type = type;
+      newNode->nextNode = NULL;
       plast->nextNode = newNode;
       plast = newNode;
       return;
     }
     //insérer en quelquonque position
     else{
+      ListNode *newNode = (ListNode*) malloc (sizeof(ListNode));
+      newNode->level = level;
+      newNode->name = name;
+      newNode->type = type;
       ListNode *currentnode = pfirst;
-      for (int i = 0; i < index; i++){
-
+      for (int i = 1; i < index-1; i++){
+        currentnode = currentnode->nextNode;
       }
+      ListNode *nextNode = currentnode->nextNode;
+      currentnode->nextNode = newNode;
+      newNode->nextNode = nextNode;
       return;
     }
     return;
+  }
+  void Delete(int index, ListElem *L){
+    if (index <= 0 || index > countitem(L)){
+      cout << "index invalide" << endl;
+      return;
+    }
+    //si un seul élement
+    if (countitem(L) == 1 && index == 1){
+      pfirst = NULL;
+      plast = NULL;
+      return;
+    }
+    //delete au debut
+    if (index == 1){
+      pfirst = pfirst->nextNode;
+      return;
+    }
+    //delete la derniere
+    if (index == countitem(L)){
+      ListNode *currentnode = pfirst;
+      for (int i = 1; i < index-1; i++){
+        currentnode = currentnode->nextNode;
+      }
+      currentnode->nextNode = NULL;
+      plast  = currentnode;
+    }
+    //reste
+    else{
+      ListNode *currentnode = pfirst;
+      for (int i = 1; i < index-1; i++){
+        currentnode = currentnode->nextNode;
+      }
+      ListNode *nextNode = currentnode->nextNode->nextNode;
+      currentnode->nextNode = nextNode;
+      return;
+    }
+  }
+  void printall(ListElem *L){
+    if (pfirst == NULL){
+      cout << "liste vide"<< endl;
+      return;
+    }
+    else{
+      int count = 1;
+      ListElem *currentnode = pfirst;
+      while (currentnode->nextNode != NULL){
+        cout << count << ". " << currentnode->name << endl;
+        cout << "        Type :" << currentnode->type << endl;
+        cout << "        Level :" << currentnode->level << endl;
+        count++;
+        currentnode = currentnode->nextNode;
+      }
+      cout << count << ". " << currentnode->name << endl;
+      cout << "        Type :" << currentnode->type << endl;
+      cout << "        Level :" << currentnode->level << endl;
+      return;
+    }
+  }
 
+  void findmin(ListElem *L){
+    if (pfirst == NULL){
+      cout << "Not Found"<< endl;
+      return;
+    }
+    else{
+      ListElem *currentnode = pfirst;
+      int minlevel = currentnode->level;
+      std::string name = currentnode->name;
+      while (currentnode->nextNode != NULL){
+        if (currentnode->level < minlevel){
+          minlevel = currentnode->level;
+          name = currentnode->name;
+        }
+        currentnode = currentnode->nextNode;
+      }
+      if (currentnode->level < minlevel){
+        minlevel = currentnode->level;
+        name = currentnode->name;
+      }
+      cout << "The pokemon with the lowest level is: " << name << " who is level " << minlevel << endl;
+      return;
+    }
+  }
 
+  void findmax(ListElem *L){
+    if (pfirst == NULL){
+      cout << " Not Found"<< endl;
+      return;
+    }
+    else{
+      ListElem *currentnode = pfirst;
+      int maxlevel = currentnode->level;
+      std::string name = currentnode->name;
+      while (currentnode->nextNode != NULL){
+        if (currentnode->level > maxlevel){
+          maxlevel = currentnode->level;
+          name = currentnode->name;
+        }
+        currentnode = currentnode->nextNode;
+      }
+      if (currentnode->level > maxlevel){
+        maxlevel = currentnode->level;
+        name = currentnode->name;
+      }
+      cout << "The pokemon with the highest level is: " << name << " who is level " << maxlevel << endl;
+      return;
+    }
+  }
+  void find(ListElem *L, std::string name){
+    if (pfirst == NULL){
+      cout << "Not Found"<< endl;
+      return;
+    }
+    else{
+      bool found= false;
+      ListElem *currentnode = pfirst;
+      while (currentnode->nextNode != NULL){
+        if (name == currentnode->name){
+          cout<<"Pokemon found : "<< currentnode->name<< " Level : "
+          << currentnode->level << " Type : " << currentnode->type << endl;
+          found =true;
+        }
+        currentnode = currentnode->nextNode;
+      }
+      if (name == currentnode->name){
+        cout<<"Pokemon found : "<< currentnode->name<< " Level : "
+        << currentnode->level << " Type : " << currentnode->type << endl;
+        found=true;
+      }
+      if (!found){
+        cout << "not found" << endl;
+      }
+      return;
+    }
   }
 
 
@@ -157,33 +296,31 @@ using namespace std;
 					cout<<"Position into the rooster:";
 					cin>>pos;
           Insert(name, level, type, pos, temp);
-          cout<< "npok:"<< countitem(temp)<<endl;
 					break;
 
 				// Delete a pokemon
 				case 2:
 					cout<<"Position in rooster:";
 					cin>>pos;
+          Delete(pos, temp);
 					break;
 
 				// Show number of Pokemons in rooster
 				case 3:
-					cout<<"Number of Pokemons:"<< "GIMME YOUR VALUE HERE" << endl;
+					cout<<"Number of Pokemons:"<< countitem(temp) << endl;
 					break;
 
 				// Find Pokemon with lowest level
 				case 4:
 					//if you found a pokemon
-						cout<<"The pokemon with the lowest level is:"<<"GIMME YOUR VALUE HERE"<<
-						" who is level " << "GIMME YOUR VALUE HERE"<<endl;
+					findmin(temp);
 					//else you should return cout<<"Not found\n";
 					break;
 
 				// Find Pokemon with highest level
 				case 5:
 					//if you found a pokemon
-						cout<<"The pokemon with the highest level is :"<<"GIMME YOUR VALUE HERE"<<
-						" who is level " << "GIMME YOUR VALUE HERE"<<endl;
+					findmax(temp);
 					//else you should return cout<<"Not found\n";
 					break;
 
@@ -192,9 +329,7 @@ using namespace std;
 					cout<<"Find what:";
 					cin>>name;
 					//if you found a pokemon :
-						cout<<"Pokemon found : "<< "GIMME YOUR VALUE HERE"<< " Level : "
-						<< "GIMME YOUR VALUE HERE" << " Type : " << "GIMME YOUR VALUE HERE" << endl;
-
+					find(temp, name);
 					//else you should return cout<<"Not found\n";
 
 
@@ -203,6 +338,7 @@ using namespace std;
 				// Show all Pokemon in rooster
 				case 7:
 					cout<<"All Pokemons in rooster:\n";
+          printall(temp);
 					break;
 
 				// Quit Pokemon Rooster
